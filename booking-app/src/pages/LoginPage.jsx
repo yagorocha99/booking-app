@@ -9,9 +9,9 @@ export default function LoginPage (){
                     <input type="email" placeholder="your@email.com"/>
                     <input type="password" placeholder="password" />
                     <button className="primary">Login</button>
-                    <div className="text-center py-2">
+                    <div className="text-center py-2 text-gray-500">
                         Don`t have an account yet? 
-                        <Link to={'/register'}/>
+                        <Link className="underline text-black" to={'/register'}/>
                     </div>
                 </form>
             </div>
