@@ -27,6 +27,11 @@ app.get('/test', (req,res) => {
 
 app.post('/register', async (req,res) =>{
     const {name,email,password} = req.body;
+
+    if (!name.trim() || !email.trim() || !password.trim()) {
+        return res.status(400).json({ error: 'Name, email, and password are required.' });
+    }
+
     try{
         const userDoc = await User.create({
             name,
@@ -39,26 +44,37 @@ app.post('/register', async (req,res) =>{
     }
 });
 
-app.post('/login', async (req,res) => {
-    const {email, password} = req.body;
-    const userDoc = await User.findOne({email});
-    if (userDoc){
-        const passOk = bcrypt.compareSync(password, userDoc.password);
-        if (passOk) {
-            jwt.sign({
-                email:userDoc.email, 
-                id:userDoc._id, }, 
-                jwtSecret, {}, (err, token) =>{
-                if (err) throw err;
-                res.cookie('token', token).json(userDoc);
-            });
-        } else {
-            res.status(422).json('pass not ok');
-        }
-    } else {
-        res.json('not found');
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email.trim() || !password.trim()) {
+        return res.status(400).json({ error: 'Email and password are required' });
     }
-})
+
+    try {
+        const userDoc = await User.findOne({ email });
+        if (userDoc) {
+            const passOk = bcrypt.compareSync(password, userDoc.password);
+            if (passOk) {
+                jwt.sign({
+                    email: userDoc.email,
+                    id: userDoc._id,
+                }, jwtSecret, {}, (err, token) => {
+                    if (err) throw err;
+                    res.cookie('token', token).json(userDoc);
+                });
+            } else {
+                return res.status(401).json({ error: 'Incorrect password.' });
+            }
+        } else {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+    } catch (e) {
+        return res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+
+
 
 app.get('/profile', (req,res) => {
     const {token} = req.cookies;

@@ -1,6 +1,7 @@
 import { useContext, useState } from "react"
 import { UserContext } from "../UserContext"
 import { Link, Navigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function AccountPage() {
     const [redirect, setRedirect] = useState(null);
@@ -26,12 +27,14 @@ export default function AccountPage() {
     }
 
     
-    function linkClasses (type=null){
-        let classes = 'py px-6';
-        if (type === subpage){
-            classes += 'bg-primary text-white rounded-full';
+    function linkClasses (type=null) {
+        let classes = 'inline-flex gap-1 py-2 px-6 rounded-full';
+        if (type === subpage) {
+          classes += ' bg-primary text-white';
+        } 
+        if (type !== subpage) {
+          classes += ' bg-gray-200';
         }
-
         return classes;
     }
     
