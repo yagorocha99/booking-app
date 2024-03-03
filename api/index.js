@@ -5,14 +5,16 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const User = require('./models/User.js');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 const cookieParser = require('cookie-parser');
+const imageDownloader = require('image-downloader');
+require('dotenv').config();
+
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'fasefrasd5465as4d654as65d4asdas';
 
-
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173'
@@ -91,6 +93,25 @@ app.get('/profile', (req,res) => {
 
 app.post('/logout', (req, res) =>{
     res.cookie('token', '').json(true);
+})
+
+app.post('/upload-by-link', async (req,res) => {
+    console.log(req.body);
+    const {link} = req.body;
+    if(!link){
+        return res.status(400).json({ error: 'URL is required'});
+    }
+    const newName = Date.now() + '.jpg';
+    try {
+        await imageDownloader.image({
+            url: link,
+            dest: __dirname + '/uploads/' + newName,
+        })
+        res.json(newName);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to download image' });
+    }
 })
 
 app.listen(4000); 
