@@ -170,11 +170,14 @@ app.put('/places/:id', async (req,res) => {
     } = req.body;
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         const placeDoc = await Place.findById(id);    
-        if (userData.id === placeDoc.owner) {
+        if (userData.id === placeDoc.owner.toString()) {
             placeDoc.set({
-                
+                owner: userData.id,
+                title, address, photos:addedPhotos, description,
+                perks, extraInfo, checkIn, checkOut, maxGuests,
             })
-            placeDoc.save();
+            await placeDoc.save();
+            res.json('ok');
         }
     });
 })
