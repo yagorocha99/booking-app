@@ -140,7 +140,7 @@ app.post('/places', (req, res) => {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) throw err;
         const placeDoc = await Place.create({
-            owner: userData.id,
+            owner: userData.id, price,
             title, address, photos:addedPhotos, description,
             perks, extraInfo, checkIn, checkOut, maxGuests,
         });
@@ -149,7 +149,10 @@ app.post('/places', (req, res) => {
 });
 
 app.get('/places', (req,res) => {
-    const {token} = req.cookies;
+    const { token } = req.cookies;
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         const {id} = userData;
         res.json( await Place.find({owner:id}) );
@@ -161,25 +164,28 @@ app.get('/places/:id', async (req, res) => {
     res.json(await Place.findById(id));
 })
 
-app.put('/places/:id', async (req,res) => {
-    
+app.put('/places', async (req,res) => {
     const {token} = req.cookies;
     const {
         id, title, address, addedPhotos, description,
-        perks, extraInfo, checkIn, checkOut, maxGuests,
+        perks, extraInfo, checkIn, checkOut, maxGuests, price,
     } = req.body;
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
         const placeDoc = await Place.findById(id);    
         if (userData.id === placeDoc.owner.toString()) {
             placeDoc.set({
-                owner: userData.id,
                 title, address, photos:addedPhotos, description,
-                perks, extraInfo, checkIn, checkOut, maxGuests,
+                perks, extraInfo, checkIn, checkOut, maxGuests, price,
             })
             await placeDoc.save();
             res.json('ok');
         }
     });
 })
+
+app.get('/places', async (req, res) => {
+    res.json( await Place.find() );
+});
 
 app.listen(4000); 
