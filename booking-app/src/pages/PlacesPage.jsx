@@ -11,7 +11,7 @@ export default function PlacesPage(){
         axios.get('/user-places').then(({data}) => {
             setPlaces(data);
         })
-    })
+    }, []);
     return (
         <div>
             <AccountNav />

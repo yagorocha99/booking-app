@@ -135,7 +135,7 @@ app.post('/places', (req, res) => {
     const {token} = req.cookies;
     const {
         title, address, addedPhotos, description,
-        perks, extraInfo, checkIn, checkOut, maxGuests,
+        perks, extraInfo, checkIn, checkOut, maxGuests, price,
     } = req.body;
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) throw err;
@@ -157,6 +157,24 @@ app.get('/places', (req,res) => {
         const {id} = userData;
         res.json( await Place.find({owner:id}) );
     });
+});
+
+app.get('/user-places', async (req, res) => {
+    const { token } = req.cookies;
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+    try {
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+            if (err) throw err;
+            const { id } = userData;
+            const places = await Place.find({ owner: id });
+            res.json(places);
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 app.get('/places/:id', async (req, res) => {

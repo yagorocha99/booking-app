@@ -18,6 +18,12 @@ export default function PlacesFormPage() {
   const [maxGuests,setMaxGuests] = useState(1);
   const [price,setPrice] = useState(100);
   const [redirect,setRedirect] = useState(false);
+
+  function convertTimeToMinutes(time) {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
   useEffect(() => {
     if (!id) {
       return;
@@ -57,10 +63,15 @@ export default function PlacesFormPage() {
 
   async function savePlace(ev) {
     ev.preventDefault();
+
+    const checkInMinutes = convertTimeToMinutes(checkIn);
+    const checkOutMinutes = convertTimeToMinutes(checkOut);
+
     const placeData = {
       title, address, addedPhotos,
       description, perks, extraInfo,
-      checkIn, checkOut, maxGuests, price,
+      checkIn: checkInMinutes, checkOut: checkOutMinutes,
+      maxGuests, price,
     };
     if (id) {
       await axios.put('/places', {
