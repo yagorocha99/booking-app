@@ -1,0 +1,15 @@
+{
+  "name": "booking",
+  "version": "1.0.0",
+  "description": "Project created for educational purposes, to learn new technologies. Fullstack web application for landlords and guests to register, where one creates their location page for rental and the other makes reservations for the locations.",
+  "main": "index.js",
+  "scripts": {
+    "start": "start cmd /k \"cd booking-app && npm run dev\" && start cmd /k \"cd api && npm run dev\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
