@@ -11,10 +11,20 @@ const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
+const { resolve } = require('path');
 require('dotenv').config();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'fasefrasd5465as4d654as65d4asdas';
+
+function getUserDataFromReq (req){
+    return new Promise((resolve, reject) => {
+        jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+            if (err) throw err;
+            return userData;
+        });
+    });
+}
 
 app.use(express.json());
 app.use(cookieParser());
@@ -207,17 +217,25 @@ app.get('/places', async (req, res) => {
     res.json( await Place.find() );
 });
 
-app.post('/bookings', (req, res) => {
+app.post('/bookings', async (req, res) => {
+   const userData = await getUserDataFromReq(req);
     const {
         place, checkIn, checkOut, numberOfGuests, name, phone, price,
     } = req.body;
+
     Booking.create({
         place, checkIn, checkOut, numberOfGuests, name, phone, price,
+        user:userData.id,
     }).then((err, doc) => {
         res.json('doc');
     }).catch((err) => {
         throw err;
     });
+});
+
+app.get('/bookings', async (req, res) => {
+    const userData = await getUserDataFromReq(req);
+    res.json( await Booking.find({user:userData.id}).populate('place') );
 });
 
 app.listen(4000); 
