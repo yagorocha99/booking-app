@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
 import { useContext, useEffect, useState } from 'react';
 import { differenceInCalendarDays } from 'date-fns';
 import axios from 'axios';
 import {Navigate} from 'react-router-dom';
 import { UserContext } from './UserContext';
+import PropTypes from 'prop-types';
 
 export default function BookingWidget({place}){
     const [checkIn, setCheckIn] = useState('');
@@ -91,9 +91,10 @@ export default function BookingWidget({place}){
     );
 }
 
+
 BookingWidget.propTypes = {
-    place: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired,
-    }).isRequired,
+ place: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+ }).isRequired,
 };
