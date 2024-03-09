@@ -14,7 +14,7 @@ export default function ProfilePage() {
         subpage = 'profile';
     }
 
-    async function Logout(){
+    async function logout(){
         await axios.post('/logout');
         setRedirect('/');
         setUser(null);
@@ -38,7 +38,7 @@ export default function ProfilePage() {
             {subpage === 'profile' && (
                 <div className="text-center max-w-lg mx-auto">
                     Logged in as {user.name} ({user.email})<br />
-                    <button onClick={Logout} className="primary max-w-sm mt-2">Logout</button>
+                    <button onClick={logout} className="primary max-w-sm mt-2">Logout</button>
                 </div>
             )}
 

@@ -17,11 +17,14 @@ require('dotenv').config();
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'fasefrasd5465as4d654as65d4asdas';
 
-function getUserDataFromReq (req){
+function getUserDataFromReq(req) {
     return new Promise((resolve, reject) => {
-        jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
-            if (err) throw err;
-            return userData;
+        jwt.verify(req.cookies.token, jwtSecret, (err, userData) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(userData);
+            }
         });
     });
 }
@@ -31,7 +34,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173'
+    origin: 'http://localhost:5173',
 }));
 
 mongoose.connect(process.env.MONGO_URL)
@@ -137,7 +140,7 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
         const ext = parts[parts.length - 1];
         const newPath = path + '.' + ext;
         fs.renameSync(path, newPath);
-        uploadedFiles.push(newPath.replace('uploads/', ''));
+        uploadedFiles.push(newPath.replace('upload/', ''));
     }
     res.json(uploadedFiles);
 });
@@ -159,15 +162,20 @@ app.post('/places', (req, res) => {
     });
 });
 
-app.get('/places', (req,res) => {
-    const { token } = req.cookies;
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        const {id} = userData;
-        res.json( await Place.find({owner:id}) );
-    });
+//app.get('/places', (req,res) => {
+//    const { token } = req.cookies;
+//    if (!token) {
+//        return res.status(401).json({ message: 'No token provided' });
+//    }
+//    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//        const {id} = userData;
+//        res.json( await Place.find({owner:id}) );
+//    });
+//});
+
+app.get('/places', async (req, res) => {
+    const places = await Place.find();
+    res.json(places);
 });
 
 app.get('/user-places', async (req, res) => {
@@ -193,6 +201,10 @@ app.get('/places/:id', async (req, res) => {
     res.json(await Place.findById(id));
 })
 
+app.get('/places', async (req, res) => {
+    res.json( await Place.find() );
+});
+
 app.put('/places', async (req,res) => {
     const {token} = req.cookies;
     const {
@@ -213,9 +225,6 @@ app.put('/places', async (req,res) => {
     });
 });
 
-app.get('/places', async (req, res) => {
-    res.json( await Place.find() );
-});
 
 app.post('/bookings', async (req, res) => {
    const userData = await getUserDataFromReq(req);

@@ -11,14 +11,16 @@ export default function LoginPage() {
 
     async function handleLoginSubmit(ev) {
         ev.preventDefault();
-
+    
         if (!email.trim() || !password.trim()) {
             alert('Email and password are required.');
             return;
         }
-
+    
         try {
             const { data } = await axios.post('/login', { email, password });
+            const token = data.token;
+            localStorage.setItem('token', token);
             setUser(data);
             alert('Login successful');
             setRedirect(true);
@@ -26,6 +28,7 @@ export default function LoginPage() {
             alert('Login failed');
         }
     }
+    
 
     if (redirect) {
         return <Navigate to={'/'} />;
