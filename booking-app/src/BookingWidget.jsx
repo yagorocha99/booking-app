@@ -28,7 +28,7 @@ export default function BookingWidget({place}){
     async function bookThisPlace (){
         const response = await axios.post('/bookings', {
             checkIn, checkOut, numberOfGuests, name, phone,
-            place:place.id,
+            place:place._id,
             price:numberOfNights * place.price,
         });
         const bookingId = response.data._id;
@@ -94,7 +94,7 @@ export default function BookingWidget({place}){
 
 BookingWidget.propTypes = {
  place: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
  }).isRequired,
 };
