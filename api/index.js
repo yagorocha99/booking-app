@@ -162,17 +162,6 @@ app.post('/places', (req, res) => {
     });
 });
 
-//app.get('/places', (req,res) => {
-//    const { token } = req.cookies;
-//    if (!token) {
-//        return res.status(401).json({ message: 'No token provided' });
-//    }
-//    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-//        const {id} = userData;
-//        res.json( await Place.find({owner:id}) );
-//    });
-//});
-
 app.get('/places', async (req, res) => {
     const places = await Place.find();
     res.json(places);
@@ -205,25 +194,41 @@ app.get('/places', async (req, res) => {
     res.json( await Place.find() );
 });
 
-app.put('/places', async (req,res) => {
-    const {token} = req.cookies;
-    const {
-        id, title, address, addedPhotos, description,
-        perks, extraInfo, checkIn, checkOut, maxGuests, price,
-    } = req.body;
+app.put('/places', async (req, res) => {
+    const { token } = req.cookies;
+    if (!token) {
+        return res.status(401).json({ message: 'Token not provided' });
+    }
+
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err;
-        const placeDoc = await Place.findById(id);    
-        if (userData.id === placeDoc.owner.toString()) {
-            placeDoc.set({
-                title, address, photos:addedPhotos, description,
-                perks, extraInfo, checkIn, checkOut, maxGuests, price,
-            })
-            await placeDoc.save();
-            res.json('ok');
+        if (err) {
+            return res.status(401).json({ message: 'Invalid token' });
         }
+
+        const {
+            id, title, address, addedPhotos, description,
+            perks, extraInfo, checkIn, checkOut, maxGuests, price,
+        } = req.body;
+
+        const placeDoc = await Place.findById(id);
+        if (!placeDoc) {
+            return res.status(404).json({ message: 'Place not found' });
+        }
+
+        if (userData.id !== placeDoc.owner.toString()) {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
+        placeDoc.set({
+            title, address, photos: addedPhotos, description,
+            perks, extraInfo, checkIn, checkOut, maxGuests, price,
+        });
+
+        await placeDoc.save();
+        res.json('ok');
     });
 });
+
 
 
 app.post('/bookings', async (req, res) => {

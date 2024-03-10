@@ -1,78 +1,113 @@
 import PhotosUploader from "../PhotosUploader.jsx";
 import Perks from "../Perks.jsx";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import AccountNav from "../AccountNav";
-import {Navigate, useParams} from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 export default function PlacesFormPage() {
-  const {id} = useParams();
-  const [title,setTitle] = useState('');
-  const [address,setAddress] = useState('');
-  const [addedPhotos,setAddedPhotos] = useState([]);
-  const [description,setDescription] = useState('');
-  const [perks,setPerks] = useState([]);
-  const [extraInfo,setExtraInfo] = useState('');
-  const [checkIn,setCheckIn] = useState('');
-  const [checkOut,setCheckOut] = useState('');
-  const [maxGuests,setMaxGuests] = useState(1);
-  const [price,setPrice] = useState(100);
-  const [redirect,setRedirect] = useState(false);
+ const { id } = useParams();
+ const [title, setTitle] = useState('');
+ const [address, setAddress] = useState('');
+ const [addedPhotos, setAddedPhotos] = useState([]);
+ const [description, setDescription] = useState('');
+ const [perks, setPerks] = useState([]);
+ const [extraInfo, setExtraInfo] = useState('');
+ const [checkIn, setCheckIn] = useState('');
+ const [checkOut, setCheckOut] = useState('');
+ const [maxGuests, setMaxGuests] = useState(1);
+ const [price, setPrice] = useState(100);
+ const [redirect, setRedirect] = useState(false);
+ const [errorMessage, setErrorMessage] = useState('');
 
-  function convertTimeToMinutes(time) {
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes;
-  }
-
-  useEffect(() => {
+ useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get('/places/'+id).then(response => {
-       const {data} = response;
-       setTitle(data.title);
-       setAddress(data.address);
-       setAddedPhotos(data.photos);
-       setDescription(data.description);
-       setPerks(data.perks);
-       setExtraInfo(data.extraInfo);
-       setCheckIn(data.checkIn);
-       setCheckOut(data.checkOut);
-       setMaxGuests(data.maxGuests);
-       setPrice(data.price);
+    axios.get('/places/' + id).then(response => {
+      const { data } = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddedPhotos(data.photos);
+      setDescription(data.description);
+      setPerks(data.perks);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      setPrice(data.price);
     });
-  }, [id]);
-  function inputHeader(text) {
+ }, [id]);
+
+ function inputHeader(text) {
     return (
       <h2 className="text-2xl mt-4">{text}</h2>
     );
-  }
-  function inputDescription(text) {
+ }
+
+ function inputDescription(text) {
     return (
       <p className="text-gray-500 text-sm">{text}</p>
     );
-  }
-  function preInput(header,description) {
+ }
+
+ function preInput(header, description) {
     return (
       <>
         {inputHeader(header)}
         {inputDescription(description)}
       </>
     );
+ }
+
+ function validateTime(time) {
+    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(time)) {
+       return false;
+    }
+    const [hours, minutes] = time.split(':');
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+       return false;
+    }
+    return true;
   }
 
-  async function savePlace(ev) {
+  function validateForm() {
+    let errors = [];
+    if (!title) errors.push('Title is required');
+    if (!address) errors.push('Address is required');
+    if (!description) errors.push('Description is required');
+    if (!extraInfo) errors.push('Extra info is required');
+    if (!checkIn) errors.push('Check-in time is required');
+    if (!checkOut) errors.push('Check-out time is required');
+    if (!maxGuests) errors.push('Max number of guests is required');
+    if (!price) errors.push('Price per night is required');
+    if (addedPhotos.length < 3) errors.push('At least 3 photos are required');
+
+    if (errors.length > 0) {
+        const errorMessage = errors.join(', ');
+        setErrorMessage(errorMessage);
+        return false;
+    }
+    setErrorMessage('');
+    return true;
+  }
+
+
+ async function savePlace(ev) {
     ev.preventDefault();
 
-    const checkInMinutes = convertTimeToMinutes(String(checkIn));
-    const checkOutMinutes = convertTimeToMinutes(String(checkOut));
+    if (!validateForm()) {
+      return;
+    }
 
     const placeData = {
       title, address, addedPhotos,
       description, perks, extraInfo,
-      checkIn: checkInMinutes, checkOut: checkOutMinutes,
+      checkIn, checkOut,
       maxGuests, price,
     };
+
     if (id) {
       await axios.put('/places', {
         id, ...placeData
@@ -82,60 +117,104 @@ export default function PlacesFormPage() {
       await axios.post('/places', placeData);
       setRedirect(true);
     }
+ }
 
-  }
-
-  if (redirect) {
+ if (redirect) {
     return <Navigate to={'/account/places'} />
-  }
+ }
 
-  return (
+ return (
     <div>
       <AccountNav />
       <form onSubmit={savePlace}>
         {preInput('Title', 'Title for your place. should be short and catchy as in advertisement')}
-        <input type="text" value={title || ''} onChange={ev => setTitle(ev.target.value)} placeholder="title, for example: My lovely apt"/>
+        <input
+          type="text"
+          value={title || ''}
+          onChange={ev => setTitle(ev.target.value)}
+          placeholder="title, for example: My lovely apt"
+          className={`border-2 ${!title ? 'border-red-500' : ''}`}
+        />
         {preInput('Address', 'Address to this place')}
-        <input type="text"value={address || ''} onChange={ev => setAddress(ev.target.value)}placeholder="address"/>
-        {preInput('Photos','more = better')}
+        <input
+          type="text"
+          value={address || ''}
+          onChange={ev => setAddress(ev.target.value)}
+          placeholder="address"
+          className={`border-2 ${!address ? 'border-red-500' : ''}`}
+        />
+        {preInput('Photos', 'more = better')}
         <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
-        {preInput('Description','description of the place')}
-        <textarea value={description || ''} onChange={ev => setDescription(ev.target.value)} />
-        {preInput('Perks','select all the perks of your place')}
+        {preInput('Description', 'description of the place')}
+        <textarea
+          value={description || ''}
+          onChange={ev => setDescription(ev.target.value)}
+          className={`border-2 ${!description ? 'border-red-500' : ''}`}
+        />
+        {preInput('Perks', 'select all the perks of your place')}
         <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           <Perks selected={perks} onChange={setPerks} />
         </div>
-        {preInput('Extra info','house rules, etc')}
-        <textarea value={extraInfo || ''} onChange={ev => setExtraInfo(ev.target.value)} />
-        {preInput('Check in&out times','add check in and out times, remember to have some time window for cleaning the room between guests')}
+        {preInput('Extra info', 'house rules, etc')}
+        <textarea
+          value={extraInfo || ''}
+          onChange={ev => setExtraInfo(ev.target.value)}
+          className={`border-2 ${!extraInfo ? 'border-red-500' : ''}`}
+        />
+        {preInput('Check in&out times', 'add check in and out times, remember to have some time window for cleaning the room between guests')}
         <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
           <div>
             <h3 className="mt-2 -mb-1">Check in time</h3>
-            <input type="text"
-                   value={checkIn || ''}
-                   onChange={ev => setCheckIn(ev.target.value)}
-                   placeholder="14"/>
+            <input
+              type="text"
+              value={checkIn || ''}
+              onChange={ev => setCheckIn(ev.target.value)}
+              onBlur={ev => {
+                if (!validateTime(ev.target.value)) {
+                 setCheckIn('');
+                }
+              }}
+              placeholder="14:00"
+              className={`border-2 ${!checkIn ? 'border-red-500' : ''}`}
+            />
           </div>
           <div>
             <h3 className="mt-2 -mb-1">Check out time</h3>
-            <input type="text"
-                   value={checkOut || ''}
-                   onChange={ev => setCheckOut(ev.target.value)}
-                   placeholder="11" />
+            <input
+              type="text"
+              value={checkOut || ''}
+              onChange={ev => setCheckOut(ev.target.value)}
+              onBlur={ev => {
+                if (!validateTime(ev.target.value)) {
+                 setCheckOut('');
+                }
+              }}
+              placeholder="11:00"
+              className={`border-2 ${!checkOut ? 'border-red-500' : ''}`}
+            />
           </div>
           <div>
             <h3 className="mt-2 -mb-1">Max number of guests</h3>
-            <input type="number" value={maxGuests}
-                   onChange={ev => setMaxGuests(ev.target.value)}/>
+            <input
+              type="number"
+              value={maxGuests}
+              onChange={ev => setMaxGuests(ev.target.value)}
+              className={`border-2 ${!maxGuests ? 'border-red-500' : ''}`}
+            />
           </div>
           <div>
             <h3 className="mt-2 -mb-1">Price per night</h3>
-            <input type="number" value={price}
-                   onChange={ev => setPrice(ev.target.value)}/>
+            <input
+              type="number"
+              value={price}
+              onChange={ev => setPrice(ev.target.value)}
+              className={`border-2 ${!price ? 'border-red-500' : ''}`}
+            />
           </div>
         </div>
+        {errorMessage && <div className="text-red-500 mb-4 text-2xl">{errorMessage}</div>}
         <button className="primary my-4">Save</button>
       </form>
     </div>
-  );
+ );
 }

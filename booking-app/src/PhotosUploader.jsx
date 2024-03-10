@@ -8,14 +8,11 @@ export default function PhotosUploader({addedPhotos, onChange}){
     async function addPhotoByLink(ev) {
         ev.preventDefault();
         const {data: filename} = await axios.post('/upload-by-link' , {link: photoLink});
-        onChange(prev => {
-            return [...prev, filename];
-        });
+        const imageUrl = `uploads/${filename}`;
+        onChange(prev => [...prev, imageUrl]);
         setPhotoLink('');
     }
     
-    
-
     function uploadPhoto(ev) {
         const files = ev.target.files;
         const data = new FormData();
@@ -26,20 +23,18 @@ export default function PhotosUploader({addedPhotos, onChange}){
             headers: {'Content-type' : 'multipart/form-data'}
         }).then(response => {
             const {data: filenames} = response;
-            onChange(prev => {
-                return [...prev, ...filenames];
-            })
+            onChange(prev => [...prev, ...filenames]);
         })
     }
     
     function removePhoto(ev, filename) {
         ev.preventDefault();
-        onChange([...addedPhotos.filter(photo => photo !== filename)]);
+        onChange(prev => prev.filter(photo => photo !== filename));
     }
 
     function selectAsMainPhoto(ev,filename) {
         ev.preventDefault();
-        onChange([filename,...addedPhotos.filter(photo => photo !== filename)]);
+        onChange(prev => [filename, ...prev.filter(photo => photo !== filename)]);
     }
 
     return(

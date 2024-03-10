@@ -1,4 +1,3 @@
-import './App.css'
 import {Route, Routes} from 'react-router-dom'
 import IndexPage from './pages/IndexPage'
 import LoginPage from './pages/LoginPage'
@@ -28,7 +27,7 @@ function App() {
           <Route path='/account/places' element={<PlacesPage/>} />
           <Route path='/account/places/new' element ={<PlacesFormPage />} />
           <Route path='/account/places/:id' element ={<PlacesFormPage />} />
-          <Route path='/place/:id' element={<PlacePage />} />
+          <Route path='/place/:id' element={<PlacePage perks={[]} />} />
           <Route path='/account/bookings' element={<BookingsPage />} />
           <Route path='/account/bookings/:id' element={<BookingPage />} />
         </Route>
