@@ -15,7 +15,7 @@ export default function ProfilePage() {
     }
 
     async function logout(){
-        await axios.post('/logout');
+        await axios.post('https://backend-booking-two.vercel.app/logout');
         setRedirect('/');
         setUser(null);
     }

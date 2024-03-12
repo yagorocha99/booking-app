@@ -9,7 +9,7 @@ export default function PlaceImg({place, index=0, className}) {
     }
 
     return (
-        <img className={className} src={'http://localhost:4000/'+place.photos[index]} alt="" />
+        <img className={className} src={'https://backend-booking-two.vercel.app/'+place.photos[index]} alt="" />
     );
 }
 

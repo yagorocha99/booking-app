@@ -21,7 +21,7 @@ export default function PlaceGallery({place}) {
                         return(
                             <>
                                 <div key={`photo-${index}`} className="h-96">
-                                    <img src={`http://localhost:4000/${photo}`} alt="" className="rounded object-cover w-full h-full" />
+                                    <img src={`https://backend-booking-two.vercel.app/${photo}`} alt="" className="rounded object-cover w-full h-full" />
                                 </div>
                             </>
                         )
@@ -38,17 +38,17 @@ export default function PlaceGallery({place}) {
                     <div>
                         {place.photos?.[0] && (
                             <div className="">
-                                <img onClick={() => setShowAllPhotos(true)} className="h-full w-full object-cover" src={'http://localhost:4000/'+place.photos[0]} />
+                                <img onClick={() => setShowAllPhotos(true)} className="h-full w-full object-cover" src={'https://backend-booking-two.vercel.app/'+place.photos[0]} />
                             </div>
                         )}
                     </div>
                     <div className="grid gap-2 ">
                         {place.photos?.[1] && (
-                            <img onClick={() => setShowAllPhotos(true)} className="h-full w-full object-cover" src={'http://localhost:4000/'+place.photos[1]} />
+                            <img onClick={() => setShowAllPhotos(true)} className="h-full w-full object-cover" src={'https://backend-booking-two.vercel.app/'+place.photos[1]} />
                         )}
                         <div className="overflow-hidden">
                             {place.photos?.[2] && (
-                                <img onClick={() => setShowAllPhotos(true)} className="h-full w-full object-cover" src={'http://localhost:4000/'+place.photos[2]} />
+                                <img onClick={() => setShowAllPhotos(true)} className="h-full w-full object-cover" src={'https://backend-booking-two.vercel.app/'+place.photos[2]} />
                             )}
                         </div>
                     </div>

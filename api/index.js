@@ -15,7 +15,7 @@ const { resolve } = require('path');
 require('dotenv').config();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = 'fasefrasd5465as4d654as65d4asdas';
+const jwtSecret = process.env.JWT_SECRET || 'fasefrasd5465as4d654as65d4asdas';
 
 function getUserDataFromReq(req) {
     return new Promise((resolve, reject) => {
@@ -34,10 +34,10 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin: 'https://booking-app-chi-amber.vercel.app',
 }));
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 app.get('/test', (req,res) => {
@@ -308,4 +308,6 @@ app.get('/bookings', async (req, res) => {
     res.json( await Booking.find({user:userData.id}).populate('place') );
 });
 
-app.listen(4000); 
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`Server running on port ${process.env.PORT || 4000}`);
+});

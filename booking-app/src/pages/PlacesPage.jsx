@@ -8,7 +8,7 @@ export default function PlacesPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/user-places').then(({data}) => {
+    axios.get('https://backend-booking-two.vercel.app/user-places').then(({data}) => {
       setPlaces(data);
     });
   }, []);
@@ -22,10 +22,10 @@ export default function PlacesPage() {
         const bookings = bookingsResponse.data;
 
         for (const booking of bookings) {
-            await axios.delete(`/bookings/${booking._id}`);
+          await axios.delete(`https://backend-booking-two.vercel.app/bookings/${booking._id}`);
         }
 
-        await axios.delete(`/places/${placeId}`, {
+        await axios.delete(`https://backend-booking-two.vercel.app/places/${placeId}`, {
             withCredentials: true,
         });
 
