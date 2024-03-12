@@ -16,7 +16,7 @@ require('dotenv').config();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET || 'fasefrasd5465as4d654as65d4asdas';
-
+//commit test
 function getUserDataFromReq(req) {
     return new Promise((resolve, reject) => {
         jwt.verify(req.cookies.token, jwtSecret, (err, userData) => {
