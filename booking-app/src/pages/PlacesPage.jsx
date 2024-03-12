@@ -18,15 +18,23 @@ export default function PlacesPage() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`/places/${placeId}`, {
-        withCredentials: true,
-      });
-      setPlaces(places.filter(place => place._id !== placeId));
-      alert('Place deleted successfully.');
-      navigate('/');
+        const bookingsResponse = await axios.get(`/bookings?placeId=${placeId}`);
+        const bookings = bookingsResponse.data;
+
+        for (const booking of bookings) {
+            await axios.delete(`/bookings/${booking._id}`);
+        }
+
+        await axios.delete(`/places/${placeId}`, {
+            withCredentials: true,
+        });
+
+        setPlaces(places.filter(place => place._id !== placeId));
+        alert('Place and associated bookings deleted successfully.');
+        navigate('/');
     } catch (error) {
-      console.error('Error deleting the place:', error);
-      alert('Failed to delete the place. Please try again.');
+        console.error('Error deleting the place and associated bookings:', error);
+        alert('Failed to delete the place and associated bookings. Please try again.');
     }
   };
    

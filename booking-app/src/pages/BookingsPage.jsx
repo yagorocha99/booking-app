@@ -1,6 +1,6 @@
 import axios from "axios";
 import AccountNav from "../AccountNav";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlaceImg from "../PlaceImg";
 import { Link } from "react-router-dom";
 import BookingDates from "../BookingDates";
@@ -17,8 +17,8 @@ export default function BookingsPage() {
         <div>
             <AccountNav />
             <div>
-                {bookings?.length > 0 && bookings.map(booking => (
-                    <>
+                {bookings?.length > 0 && bookings.map((booking, index) => (
+                    booking.place && <React.Fragment key={index}>
                         <Link to={`/account/bookings/${booking._id}`} className="flex gap-4 bg-gray-200 rounded-2xl overflow-hidden">
                             <div className="w-48">
                                 <PlaceImg place={booking.place}/>
@@ -38,7 +38,7 @@ export default function BookingsPage() {
                                 </div>
                             </div>
                         </Link>
-                    </>
+                    </React.Fragment>
                 ))}
             </div>
         </div>
