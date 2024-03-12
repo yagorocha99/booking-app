@@ -72,6 +72,16 @@ export default function PlacesFormPage() {
     return true;
   }
 
+  function handleTimeChange(setTime, value) {
+    if (value.length === 2 && !value.includes(':')) {
+        value += ':';
+    } else if (value.length === 3 && value.includes(':')) {
+        value = value.slice(0, -1);
+    }
+    setTime(value);
+}
+
+
   function validateForm() {
     let errors = [];
     if (!title) errors.push('Title is required');
@@ -168,13 +178,14 @@ export default function PlacesFormPage() {
             <input
               type="text"
               value={checkIn || ''}
-              onChange={ev => setCheckIn(ev.target.value)}
+              onChange={ev => handleTimeChange(setCheckIn, ev.target.value)}
               onBlur={ev => {
-                if (!validateTime(ev.target.value)) {
-                 setCheckIn('');
-                }
+                  if (!validateTime(ev.target.value)) {
+                      setCheckIn('');
+                  }
               }}
               placeholder="14:00"
+              maxLength="5"
               className={`border-2 ${!checkIn ? 'border-red-500' : ''}`}
             />
           </div>
@@ -183,13 +194,14 @@ export default function PlacesFormPage() {
             <input
               type="text"
               value={checkOut || ''}
-              onChange={ev => setCheckOut(ev.target.value)}
+              onChange={ev => handleTimeChange(setCheckOut, ev.target.value)}
               onBlur={ev => {
-                if (!validateTime(ev.target.value)) {
-                 setCheckOut('');
-                }
+                  if (!validateTime(ev.target.value)) {
+                      setCheckOut('');
+                  }
               }}
               placeholder="11:00"
+              maxLength="5"
               className={`border-2 ${!checkOut ? 'border-red-500' : ''}`}
             />
           </div>
@@ -213,7 +225,7 @@ export default function PlacesFormPage() {
           </div>
         </div>
         {errorMessage && <div className="text-red-500 mb-4 text-2xl">{errorMessage}</div>}
-        <button className="primary my-4">Save</button>
+        <button className="primary my-5">Save</button>
       </form>
     </div>
  );

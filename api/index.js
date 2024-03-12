@@ -186,12 +186,50 @@ app.get('/user-places', async (req, res) => {
 });
 
 app.get('/places/:id', async (req, res) => {
-    const {id} = req.params;
-    res.json(await Place.findById(id));
-})
+    const { id } = req.params;
+    try {
+        const place = await Place.findById(id);
+        if (!place) {
+            return res.status(404).json({ message: 'Place not found.' });
+        }
+        res.json(place);
+    } catch (error) {
+        console.error('Error retrieving place:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+});
+
+app.get('/test-remove/:id', async (req, res) => {
+    const placeId = req.params.id;
+    try {
+        const removedPlace = await Place.removeById(placeId);
+        res.json({ message: 'Place removed successfully', place: removedPlace });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/places/:id', async (req, res) => {
+    const placeId = req.params.id;
+    try {
+        const removedPlace = await Place.removeById(placeId);
+        if (!removedPlace) {
+            return res.status(404).json({ message: 'Place not found' });
+        }
+        res.status(200).json({ message: 'Place removed successfully', place: removedPlace });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 app.get('/places', async (req, res) => {
-    res.json( await Place.find() );
+    try {
+        const places = await Place.find();
+        res.json(places);
+    } catch (error) {
+        console.error('Error retrieving places:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
 });
 
 app.put('/places', async (req, res) => {
@@ -240,11 +278,13 @@ app.post('/bookings', async (req, res) => {
     Booking.create({
         place, checkIn, checkOut, numberOfGuests, name, phone, price,
         user:userData.id,
-    }).then((err, doc) => {
-        res.json('doc');
+    }).then((doc) => {
+        res.json(doc);
     }).catch((err) => {
-        throw err;
+        console.error(err);
+        res.status(500).json({ error: 'Failed to create booking' });
     });
+    
 });
 
 app.get('/bookings', async (req, res) => {

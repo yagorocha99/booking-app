@@ -6,7 +6,7 @@ export default function PlaceGallery({place}) {
 
     if (showAllPhotos) {
         return (
-            <div className="fixed inset-0 bg-white z-50 min-h-screen overflow-auto">
+            <div className="bg-white z-50 min-h-screen overflow-auto">
                 <div className="p-8 grid gap-4 justify-center">
                     <div>
                         <h2 className="text-3xl mr-48">Photos of {place.title}</h2>
@@ -32,9 +32,9 @@ export default function PlaceGallery({place}) {
     }
 
     return(
-        <div className="flex justify-center items-center -mt-20 min-h-screen">
-            <div className="relative md:w-[1100px]">
-                <div className="grid gap-2 grid-cols-[4fr_1fr] rounded-3xl overflow-hidden"> 
+        <div className="flex justify-center items-center ">
+            <div className="relative max-w-4xl">
+                <div className="grid gap-2 grid-cols-[3fr_1fr] rounded-3xl overflow-hidden">  
                     <div>
                         {place.photos?.[0] && (
                             <div className="">
