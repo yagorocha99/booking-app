@@ -10,7 +10,7 @@ export default function RegisterPage() {
   async function registerUser(ev) {
     ev.preventDefault();
     try {
-        await axios.post('https://backend-booking-two.vercel.app/register', {
+        await axios.post('/register', {
             name,
             email,
             password,

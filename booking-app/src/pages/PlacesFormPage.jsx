@@ -24,7 +24,7 @@ export default function PlacesFormPage() {
     if (!id) {
       return;
     }
-    axios.get('https://backend-booking-two.vercel.app/places/' + id).then(response => {
+    axios.get('/places/' + id).then(response => {
       const { data } = response;
       setTitle(data.title);
       setAddress(data.address);
@@ -119,12 +119,12 @@ export default function PlacesFormPage() {
     };
 
     if (id) {
-      await axios.put('https://backend-booking-two.vercel.app/places', {
+      await axios.put('/places', {
         id, ...placeData
       });
       setRedirect(true);
     } else {
-      await axios.post('https://backend-booking-two.vercel.app/places', placeData);
+      await axios.post('/places', placeData);
       setRedirect(true);
     }
  }

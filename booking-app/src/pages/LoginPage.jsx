@@ -18,7 +18,7 @@ export default function LoginPage() {
         }
     
         try {
-            const { data } = await axios.post('https://backend-booking-two.vercel.app/login', { email, password });
+            const { data } = await axios.post('/login', { email, password });
             const token = data.token;
             localStorage.setItem('token', token);
             setUser(data);

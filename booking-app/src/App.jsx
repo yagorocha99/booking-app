@@ -12,7 +12,7 @@ import PlacesFormPage from './pages/PlacesFormPage'
 import BookingsPage from './pages/BookingsPage'
 import BookingPage from './pages/BookingPage'
 
-axios.defaults.baseURL = 'https://backend-booking-two.vercel.app';
+axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
 
 function App() {

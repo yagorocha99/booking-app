@@ -9,7 +9,7 @@ export function UserContextProvider({children}) {
     const [ready, setReady] = useState(false);
     useEffect(() => {
         if (!user){
-            axios.get('https://backend-booking-two.vercel.app/profile').then(({data}) =>{
+            axios.get('/profile').then(({data}) =>{
                 setUser(data);
                 setReady(true);
             });  

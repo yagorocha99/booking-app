@@ -8,7 +8,7 @@ export default function IndexPage() {
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    axios.get('https://backend-booking-two.vercel.app/places', { withCredentials: true })
+    axios.get('/places', { withCredentials: true })
        .then(response => {
          setPlaces(response.data);
        })
