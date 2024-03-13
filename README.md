@@ -37,15 +37,7 @@ Project created for educational purposes, to learn new technologies. Fullstack w
 2. Install project dependencies:
 
     ```
-    Backend
-    cd api
-    npm install
-    ```
-
-    ```
-    Frontend
-    cd booking-app
-    npm install
+    npm run install
     ```
 
 
@@ -54,10 +46,4 @@ Project created for educational purposes, to learn new technologies. Fullstack w
 To start the project, execute the following commands in separate terminals:
 
 
-    Backend
-    cd api
-    npm run dev
-
-    Frontend
-    cd booking-app
-    npm run dev
+    npm run start
