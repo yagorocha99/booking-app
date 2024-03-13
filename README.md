@@ -1,8 +1,10 @@
 # Booking app
 
+
 ## Description
 
 Project created for educational purposes, to learn new technologies. Fullstack web application for landlords and guests to register, where one creates their location page for rental and the other makes reservations for the locations.
+
 
 ## Stacks
 
@@ -10,6 +12,7 @@ Project created for educational purposes, to learn new technologies. Fullstack w
 [![Express](https://img.shields.io/badge/-Express-05122A?style=flat&logo=express&logoColor=fefefa)](https://expressjs.com/)
 [![React](https://img.shields.io/badge/-React-05122A?style=flat&logo=react&logoColor=fefefa)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/-Node.js-05122A?style=flat&logo=node.js&logoColor=fefefa)](https://nodejs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/-Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 
 ## Features
@@ -20,6 +23,7 @@ Project created for educational purposes, to learn new technologies. Fullstack w
 - Upload images for the locations.
 - Make reservations.
 - When a location is deleted by the owner, the reservations are also deleted.
+
 
 ### Instalation
 
@@ -42,6 +46,7 @@ Project created for educational purposes, to learn new technologies. Fullstack w
     cd booking-app
     npm install
     ```
+
 
 ### Usage
 
